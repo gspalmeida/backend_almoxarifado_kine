@@ -30,5 +30,5 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   });
 });
 app.listen(process.env.PORT || 3001, () => {
-  console.log('Server Started on port 3001 (if process.env.PORT isnt set up)');
+  console.log('Server Started on port: %s || 3001 (if process.env.PORT is undefined)', process.env.PORT);
 });
