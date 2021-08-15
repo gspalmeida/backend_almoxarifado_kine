@@ -8,7 +8,6 @@ interface Request {
   name: string;
   email: string;
   password: string;
-  walletBalance: string;
   avatar: string;
 }
 class CreateUserService {
@@ -16,7 +15,6 @@ class CreateUserService {
     name,
     email,
     password,
-    walletBalance,
     avatar,
   }: Request): Promise<User> {
     const userRepository = getRepository(User);
@@ -35,7 +33,6 @@ class CreateUserService {
       name,
       email,
       password: hashedPassword,
-      walletBalance,
       allow_access: false,
       status: 'toEvaluate',
       avatar,
