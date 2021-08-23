@@ -7,5 +7,7 @@ Renomeie o arquivo .evn-example, para .env e depois rode os comandos:
 ```
 sudo docker-compose up
 
+yarn install
+
 yarn dev:server
 ```
