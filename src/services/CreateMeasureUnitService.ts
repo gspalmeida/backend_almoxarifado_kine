@@ -15,9 +15,7 @@ class CreateMeasureUnitService {
     });
 
     if (checkMeasureUnitExists) {
-      throw new AppError(
-        'Essa Unidade de Medida já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkMeasureUnitExists;
     }
 
     const measureUnit = measureUnitRepository.create({

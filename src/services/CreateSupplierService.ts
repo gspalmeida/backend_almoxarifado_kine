@@ -15,9 +15,7 @@ class CreateSupplierService {
     });
 
     if (checkSupplierExists) {
-      throw new AppError(
-        'O fornecedor já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkSupplierExists;
     }
 
     const supplier = supplierRepository.create({

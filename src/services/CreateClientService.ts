@@ -15,9 +15,7 @@ class CreateClientService {
     });
 
     if (checkClientExists) {
-      throw new AppError(
-        'Esse Cliente já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkClientExists;
     }
 
     const client = clientRepository.create({

@@ -15,9 +15,7 @@ class CreateCostCenterService {
     });
 
     if (checkCostCenterExists) {
-      throw new AppError(
-        'O fornecedor já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkCostCenterExists;
     }
 
     const costCenter = costCenterRepository.create({

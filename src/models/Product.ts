@@ -40,13 +40,13 @@ class Product {
   @Column()
   qty_ordered: number;
 
-  @Column()
+  @Column({ nullable: true })
   qty_last_order: number;
 
-  @Column()
+  @Column({ nullable: true })
   qty_stocked: number;
 
-  @Column()
+  @Column({ nullable: true })
   qty_stock_limit: number;
 
   @ManyToOne(() => CostCenter, cost_center => cost_center.products, {
