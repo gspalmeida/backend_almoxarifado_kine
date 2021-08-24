@@ -15,9 +15,7 @@ class CreateTechnicianService {
     });
 
     if (checkTechnicianExists) {
-      throw new AppError(
-        'O Técnico já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkTechnicianExists;
     }
 
     const technician = technicianRepository.create({

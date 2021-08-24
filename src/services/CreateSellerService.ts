@@ -15,9 +15,7 @@ class CreateSellerService {
     });
 
     if (checkSellerExists) {
-      throw new AppError(
-        'O Vendedor já existe (impossível criar 2 com o mesmo nome)',
-      );
+      return checkSellerExists;
     }
 
     const seller = sellerRepository.create({
