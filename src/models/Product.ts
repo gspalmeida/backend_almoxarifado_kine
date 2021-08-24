@@ -7,11 +7,11 @@ import {
   UpdateDateColumn,
   OneToOne,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
-import UnitOfMeasure from './UnitOfMeasure'
-import CostCenter from './CostCenter'
-import Supplier from './Supplier'
+import MeasureUnit from './MeasureUnit';
+import CostCenter from './CostCenter';
+import Supplier from './Supplier';
 
 @Entity('products')
 class Product {
@@ -30,12 +30,12 @@ class Product {
   @Column({ nullable: true })
   unit_last_cost: number;
 
-  @ManyToOne(() => UnitOfMeasure, unit_measure => unit_measure.products, {
+  @ManyToOne(() => MeasureUnit, unit_measure => unit_measure.products, {
     eager: true,
     cascade: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
-  unit_measure: UnitOfMeasure;
+  measure_unit: MeasureUnit;
 
   @Column()
   qty_ordered: number;
@@ -52,14 +52,14 @@ class Product {
   @ManyToOne(() => CostCenter, cost_center => cost_center.products, {
     eager: true,
     cascade: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
   cost_center: CostCenter;
 
   @ManyToOne(() => Supplier, last_supplier => last_supplier.products, {
     eager: true,
     cascade: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
   last_supplier: Supplier;
 

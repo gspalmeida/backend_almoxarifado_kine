@@ -5,19 +5,19 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany
+  OneToMany,
 } from 'typeorm';
 import Product from './Product';
 
 @Entity('units_of_measure')
-class UnitOfMeasure {
+class MeasureUnit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @OneToMany(() => Product, product => product.unit_measure)
+  @OneToMany(() => Product, product => product.measure_unit)
   products: Product[];
 
   @CreateDateColumn()
@@ -27,4 +27,4 @@ class UnitOfMeasure {
   updated_at: Date;
 }
 
-export default UnitOfMeasure;
+export default MeasureUnit;
