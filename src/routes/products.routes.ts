@@ -26,7 +26,10 @@ productsRouter.post('/', async (request, response) => {
     unitMeasureId,
   } = request.body as RequestCreateUser;
 
+  console.log('\n\n\n request.body', request.body);
+
   const createProduct = new CreateProductService();
+  console.log('antes do await');
 
   const product = await createProduct.execute({
     name,
@@ -41,6 +44,8 @@ productsRouter.post('/', async (request, response) => {
     lastSupplierId,
     unitMeasureId,
   });
+
+  console.log('depois do await');
 
   return response.json(product);
 });

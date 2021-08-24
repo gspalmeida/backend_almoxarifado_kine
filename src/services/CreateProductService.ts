@@ -2,6 +2,9 @@
 import { getRepository } from 'typeorm';
 import Product from '../models/Product';
 import AppError from '../errors/AppError';
+import MeasureUnit from '../models/MeasureUnit';
+import Supplier from '../models/Supplier';
+import CostCenter from '../models/CostCenter';
 
 export interface RequestCreateUser {
   name: string;
@@ -12,9 +15,9 @@ export interface RequestCreateUser {
   qty_last_order: number;
   qty_stocked: number;
   qty_stock_limit: number;
-  unitMeasureId: string;
-  lastSupplierId: string;
-  costCenterId: string;
+  unitMeasureId: MeasureUnit;
+  lastSupplierId: Supplier;
+  costCenterId: CostCenter;
 }
 class CreateProductService {
   public async execute({
@@ -31,6 +34,7 @@ class CreateProductService {
     costCenterId,
   }: RequestCreateUser): Promise<Product> {
     const productRepository = getRepository(Product);
+    console.log('Entrou no service de produtos');
 
     const checkProductExists = await productRepository.findOne({
       where: { name },
@@ -49,6 +53,9 @@ class CreateProductService {
       qty_last_order,
       qty_stocked,
       qty_stock_limit,
+      measure_unit: unitMeasureId,
+      last_supplier: lastSupplierId,
+      cost_center: costCenterId,
     });
 
     await productRepository.save(product);
