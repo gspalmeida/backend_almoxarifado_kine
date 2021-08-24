@@ -1,7 +1,10 @@
 /* eslint-disable camelcase */
 import { Router } from 'express';
 import multer from 'multer';
+import { getRepository } from 'typeorm';
 import uploadConfig from '../config/upload';
+import AppError from '../errors/AppError';
+import User from '../models/User';
 
 import CreateUserService from '../services/CreateUserService';
 interface UserWithoutPassword {
@@ -32,6 +35,19 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
   delete user.password;
 
   return response.json(user);
+});
+
+usersRouter.get('/', async (request, response) => {
+  console.log('\n\n\n\n Entrou no get Users');
+  const usersRouterRepository = getRepository(User);
+  try {
+    const usersRouter = await usersRouterRepository.find();
+    console.log(usersRouter);
+
+    return response.json(usersRouter);
+  } catch (error) {
+    throw new AppError('Nenhum Usuário encontrado', 500);
+  }
 });
 
 export default usersRouter;
