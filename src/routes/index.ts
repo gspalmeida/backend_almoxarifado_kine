@@ -7,6 +7,7 @@ import costCentersRouter from './costCenters.routes';
 import sellersRouter from './sellers.routes';
 import techniciansRouter from './technicians.routes';
 import clientsRouter from './clients.routes';
+import measureUnitsRouter from './measureUnits.routes';
 import isAdmin from '../middlewares/isAdmin';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
@@ -19,5 +20,6 @@ routes.use('/costCenters', ensureAuthenticated, costCentersRouter);
 routes.use('/sellers', ensureAuthenticated, sellersRouter);
 routes.use('/technicians', ensureAuthenticated, techniciansRouter);
 routes.use('/clients', ensureAuthenticated, clientsRouter);
+routes.use('/measureUnits', ensureAuthenticated, measureUnitsRouter);
 
 export default routes;
