@@ -8,7 +8,7 @@ import CostCenter from '../models/CostCenter';
 
 export interface RequestCreateUser {
   name: string;
-  description: string;
+  description?: string;
   unit_cost: string;
   qty_ordered: number;
   qty_last_order?: number;
@@ -40,38 +40,73 @@ class CreateProductService {
       where: { name },
     });
 
+    let product: RequestCreateUser = {
+      name,
+      qty_ordered,
+      unit_cost,
+      unitMeasureId,
+      lastSupplierId,
+      costCenterId,
+    };
+
     //Logica para preenchimento das variáveis de acordo com as regras de negócio estabelecidas
+
+    //Preenche o campo description
     if (!description) {
       description = `Valor total da nota fiscal: ${totalPurchaseAmount}`;
+      product = { ...product, description };
+    } else {
+      product = { ...product, description };
     }
     if (productAlreadyExists) {
+      console.log('\n\n\nEntrou no update');
       qty_last_order = productAlreadyExists.qty_ordered;
       qty_stocked = productAlreadyExists.qty_stocked + qty_ordered;
       max_stock_limit =
         qty_last_order > qty_stocked ? qty_last_order : qty_stocked;
+
+      console.log(
+        'maxStock: %s qtyStocked: %s qtyLasOrder: %s',
+        qty_last_order,
+        qty_stocked,
+        max_stock_limit,
+      );
+
+      console.log('\n\nproductAlreadyExists:', productAlreadyExists);
+      console.log('\nproduct antes:', product);
+
+      product = {
+        ...productAlreadyExists,
+        ...product,
+        qty_last_order,
+        qty_stocked,
+        max_stock_limit,
+      };
+      console.log('\nproduct depois:', product);
+
+      const updatedProduct = await productRepository.save(product);
+      return updatedProduct;
     } else {
       qty_stocked = qty_ordered;
       max_stock_limit = qty_ordered;
       qty_last_order = qty_ordered;
+
+      const createProduct = productRepository.create({
+        name,
+        qty_ordered,
+        unit_cost,
+        description,
+        qty_last_order,
+        qty_stocked,
+        max_stock_limit,
+        measure_unit: unitMeasureId,
+        last_supplier: lastSupplierId,
+        cost_center: costCenterId,
+      });
+      const newProduct = await productRepository.save(createProduct);
+      return newProduct;
     }
     //Fim das Regras de Negócio pro Salvamento de Produtos
-
-    const product = productRepository.create({
-      name,
-      qty_ordered,
-      unit_cost,
-      description,
-      qty_last_order,
-      qty_stocked,
-      max_stock_limit,
-      measure_unit: unitMeasureId,
-      last_supplier: lastSupplierId,
-      cost_center: costCenterId,
-    });
-
-    await productRepository.save(product);
-
-    return product;
   }
 }
 export default CreateProductService;
