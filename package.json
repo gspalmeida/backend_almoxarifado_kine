@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && node ./node_modules/typeorm/cli.js migration:run",
     "dev:server": "ts-node-dev --inspect --trace-warnings --files --transpile-only --ignore-watch node_modules src/server.ts",
     "start": "node dist/server.js",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
