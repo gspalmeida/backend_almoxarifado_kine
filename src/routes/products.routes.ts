@@ -10,8 +10,6 @@ import CreateProductService from '../services/CreateProductService';
 const productsRouter = Router();
 
 productsRouter.post('/', async (request, response) => {
-  console.log('Entrou no post products');
-
   let {
     name,
     description,
@@ -26,10 +24,7 @@ productsRouter.post('/', async (request, response) => {
     totalPurchaseAmount,
   } = request.body as RequestCreateUser;
 
-  console.log('\n\n\n request.body', request.body);
-
   const createProduct = new CreateProductService();
-  console.log('antes do await');
 
   const product = await createProduct.execute({
     name,
@@ -45,19 +40,14 @@ productsRouter.post('/', async (request, response) => {
     totalPurchaseAmount,
   });
 
-  console.log('depois do await');
-
   return response.json(product);
 });
 
 productsRouter.get('/', async (request, response) => {
-  console.log('\n\n\n\n Entrou no get Products');
   const nameFilter = request.query.name;
   const productsRepository = getRepository(Product);
   let products: Product[] = [];
   try {
-    console.log('\n\n\n GET /products');
-
     if (nameFilter) {
       const findProduct = await productsRepository.findOne({
         where: { name: nameFilter },
@@ -74,7 +64,6 @@ productsRouter.get('/', async (request, response) => {
       const findProducts = await productsRepository.find();
       products = findProducts;
     }
-    console.log(products);
 
     return response.json(products);
   } catch (error) {
