@@ -58,12 +58,14 @@ class ServiceOrder {
   displacement_cost: number;
 
   @Column('simple-json')
-  materials: {
-    name: string;
-    qty: number;
-    unit_cost: number;
-    total_cost: number;
-  };
+  materials: [
+    {
+      name: string;
+      qty: number;
+      unit_cost: number;
+      total_cost: number;
+    },
+  ];
 
   @Column()
   materials_total_cost: number;
