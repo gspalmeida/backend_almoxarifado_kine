@@ -25,10 +25,7 @@ class Product {
   description: string;
 
   @Column()
-  unit_cost: number;
-
-  @Column({ nullable: true })
-  unit_last_cost: number;
+  unit_cost: string;
 
   @ManyToOne(() => MeasureUnit, unit_measure => unit_measure.products, {
     eager: true,
@@ -47,7 +44,7 @@ class Product {
   qty_stocked: number;
 
   @Column({ nullable: true })
-  qty_stock_limit: number;
+  max_stock_limit: number;
 
   @ManyToOne(() => CostCenter, cost_center => cost_center.products, {
     eager: true,

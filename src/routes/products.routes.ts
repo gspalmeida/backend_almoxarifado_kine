@@ -12,18 +12,18 @@ const productsRouter = Router();
 productsRouter.post('/', async (request, response) => {
   console.log('Entrou no post products');
 
-  const {
+  let {
     name,
     description,
     unit_cost,
-    unit_last_cost,
     qty_ordered,
     qty_last_order,
     qty_stocked,
-    qty_stock_limit,
+    max_stock_limit,
     costCenterId,
     lastSupplierId,
     unitMeasureId,
+    totalPurchaseAmount,
   } = request.body as RequestCreateUser;
 
   console.log('\n\n\n request.body', request.body);
@@ -35,14 +35,14 @@ productsRouter.post('/', async (request, response) => {
     name,
     description,
     unit_cost,
-    unit_last_cost,
     qty_ordered,
     qty_last_order,
     qty_stocked,
-    qty_stock_limit,
+    max_stock_limit,
     costCenterId,
     lastSupplierId,
     unitMeasureId,
+    totalPurchaseAmount,
   });
 
   console.log('depois do await');
