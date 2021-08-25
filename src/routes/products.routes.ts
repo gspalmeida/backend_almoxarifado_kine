@@ -52,9 +52,28 @@ productsRouter.post('/', async (request, response) => {
 
 productsRouter.get('/', async (request, response) => {
   console.log('\n\n\n\n Entrou no get Products');
+  const nameFilter = request.query.name;
   const productsRepository = getRepository(Product);
+  let products: Product[] = [];
   try {
-    const products = await productsRepository.find();
+    console.log('\n\n\n GET /products');
+
+    if (nameFilter) {
+      const findProduct = await productsRepository.findOne({
+        where: { name: nameFilter },
+      });
+      if (findProduct) {
+        products.push(findProduct);
+      } else {
+        throw new AppError(
+          `Nenhum produto encontrado com name=${nameFilter}`,
+          500,
+        );
+      }
+    } else {
+      const findProducts = await productsRepository.find();
+      products = findProducts;
+    }
     console.log(products);
 
     return response.json(products);
