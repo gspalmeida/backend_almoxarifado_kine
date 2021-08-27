@@ -63,4 +63,20 @@ serviceOrdersRouter.get('/', async (request, response) => {
   }
 });
 
+serviceOrdersRouter.get('/:id', async (request, response) => {
+  console.log('\n\n\n\n Entrou no get ServiceOrders');
+
+  const { id } = request.params;
+
+  const serviceOrdersRepository = getRepository(ServiceOrder);
+  try {
+    const serviceOrders = await serviceOrdersRepository.find({ where: { id } });
+    console.log(serviceOrders);
+
+    return response.json(serviceOrders);
+  } catch (error) {
+    throw new AppError('Nenhum produto encontrado', 500);
+  }
+});
+
 export default serviceOrdersRouter;

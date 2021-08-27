@@ -10,6 +10,7 @@ import clientsRouter from './clients.routes';
 import measureUnitsRouter from './measureUnits.routes';
 import productsRouter from './products.routes';
 import serviceOrdersRouter from './serviceOrders.routes';
+import addMaterialRouter from './addMaterial.routes';
 import isAdmin from '../middlewares/isAdmin';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
@@ -25,5 +26,6 @@ routes.use('/clients', ensureAuthenticated, clientsRouter);
 routes.use('/measureUnits', ensureAuthenticated, measureUnitsRouter);
 routes.use('/products', ensureAuthenticated, productsRouter);
 routes.use('/serviceOrders', ensureAuthenticated, serviceOrdersRouter);
+routes.use('/addMaterial', ensureAuthenticated, addMaterialRouter);
 
 export default routes;
