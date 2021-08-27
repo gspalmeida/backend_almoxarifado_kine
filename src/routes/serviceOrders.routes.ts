@@ -64,7 +64,7 @@ serviceOrdersRouter.get('/', async (request, response) => {
 });
 
 serviceOrdersRouter.get('/:id', async (request, response) => {
-  console.log('\n\n\n\n Entrou no get ServiceOrders');
+  console.log('\n\n\n\n Entrou no GET serviceOrders/:id');
 
   const { id } = request.params;
 

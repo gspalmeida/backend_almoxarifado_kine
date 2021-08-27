@@ -62,7 +62,7 @@ class ServiceOrder {
     {
       name: string;
       qty: number;
-      unit_cost: number;
+      unit_cost: string;
       total_cost: number;
     },
   ];

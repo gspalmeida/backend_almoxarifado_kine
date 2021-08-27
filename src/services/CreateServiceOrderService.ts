@@ -6,13 +6,6 @@ import Seller from '../models/Seller';
 import Client from '../models/Client';
 import Technician from '../models/Technician';
 
-interface Materials {
-  name: string;
-  qty: number;
-  unit_cost: number;
-  total_cost: number;
-}
-
 export interface RequestCreateServiceOrder {
   number: string;
   running: boolean;
@@ -20,7 +13,7 @@ export interface RequestCreateServiceOrder {
   closed: boolean;
   man_power_cost: number;
   displacement_cost: number;
-  materials: Materials;
+  materials: ServiceOrder['materials'];
   materials_total_cost: number;
   sellerId: Seller;
   clientId: Client;
@@ -50,10 +43,9 @@ class CreateServiceOrderService {
     if (checkServiceOrderExists) {
       throw new AppError('A OS já existe tem que chamar o update');
     }
+    /*
 
-    const product = serviceOrderRepository.create({
-      number,
-      running,
+    running,
       completed,
       closed,
       man_power_cost,
@@ -63,6 +55,16 @@ class CreateServiceOrderService {
       seller: sellerId,
       client: clientId,
       technician: technicianId,
+
+    */
+
+    const product = serviceOrderRepository.create({
+      number,
+      running,
+      closed,
+      man_power_cost,
+      displacement_cost,
+      materials,
     });
 
     await serviceOrderRepository.save(product);

@@ -31,7 +31,8 @@ class AddMaterialService {
       where: { id: product_id },
     });
 
-    if (serviceOrder && productOrder) {
+    if (serviceOrder && productOrder && productOrder.unit_cost) {
+      const totalCost = Number(productOrder.unit_cost) * qty;
       await serviceOrderRepository.update(id, {
         materials: [
           ...serviceOrder.materials,
@@ -39,7 +40,7 @@ class AddMaterialService {
             name: productOrder.name,
             qty,
             unit_cost: productOrder.unit_cost,
-            total_cost: productOrder.unit_cost * qty,
+            total_cost: totalCost,
           },
         ],
       });
