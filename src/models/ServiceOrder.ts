@@ -51,10 +51,10 @@ class ServiceOrder {
   })
   technician: Technician;
 
-  @Column()
+  @Column({ nullable: true })
   man_power_cost: number;
 
-  @Column()
+  @Column({ nullable: true })
   displacement_cost: number;
 
   @Column('simple-json')
@@ -67,10 +67,10 @@ class ServiceOrder {
     },
   ];
 
-  @Column()
+  @Column({ nullable: true })
   materials_total_cost: number;
 
-  @Column()
+  @Column({ nullable: true })
   total_cost: number;
 
   @CreateDateColumn()
