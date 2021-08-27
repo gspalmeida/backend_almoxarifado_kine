@@ -25,6 +25,7 @@ routes.use('/technicians', ensureAuthenticated, techniciansRouter);
 routes.use('/clients', ensureAuthenticated, clientsRouter);
 routes.use('/measureUnits', ensureAuthenticated, measureUnitsRouter);
 routes.use('/products', ensureAuthenticated, productsRouter);
+//TODO /addMaterial é uma rota "filha" de serviceOrders, unificar elas
 routes.use('/serviceOrders', ensureAuthenticated, serviceOrdersRouter);
 routes.use('/addMaterial', ensureAuthenticated, addMaterialRouter);
 
