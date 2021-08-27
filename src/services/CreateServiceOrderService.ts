@@ -43,11 +43,12 @@ class CreateServiceOrderService {
     if (checkServiceOrderExists) {
       throw new AppError('A OS já existe tem que chamar o update');
     }
-    /*
 
-    running,
-      completed,
+    const product = serviceOrderRepository.create({
+      number,
+      running,
       closed,
+      completed,
       man_power_cost,
       displacement_cost,
       materials,
@@ -55,16 +56,6 @@ class CreateServiceOrderService {
       seller: sellerId,
       client: clientId,
       technician: technicianId,
-
-    */
-
-    const product = serviceOrderRepository.create({
-      number,
-      running,
-      closed,
-      man_power_cost,
-      displacement_cost,
-      materials,
     });
 
     await serviceOrderRepository.save(product);
