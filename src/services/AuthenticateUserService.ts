@@ -23,17 +23,20 @@ class AuthenticateUserService {
       where: { email },
     });
     if (!user) {
-      throw new AppError('Incorrect email/password combination', 401);
+      throw new AppError('Combinação de email/senha incorreta', 401);
     }
 
     const passwordMatched = await compare(password, user.password);
 
     if (!passwordMatched) {
-      throw new AppError('Incorrect email/password combination', 401);
+      throw new AppError('Combinação de email/senha incorreta', 401);
     }
 
     if (user.allow_access !== true) {
-      throw new AppError('The Admin didnt Approved your account yet', 403);
+      throw new AppError(
+        'A adminstradora do KineAlmoxarifado (Regina) ainda não aprovou o seu acesso',
+        403,
+      );
     }
 
     const { secret, expiresIn } = authConfig.jwt;
