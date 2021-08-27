@@ -4,6 +4,7 @@ import multer from 'multer';
 import { getRepository } from 'typeorm';
 import uploadConfig from '../config/upload';
 import AppError from '../errors/AppError';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import User from '../models/User';
 
 import CreateUserService from '../services/CreateUserService';
@@ -37,7 +38,7 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
   return response.json(user);
 });
 
-usersRouter.get('/', async (request, response) => {
+usersRouter.get('/', ensureAuthenticated, async (request, response) => {
   console.log('\n\n\n\n Entrou no get Users');
   const usersRouterRepository = getRepository(User);
   try {
