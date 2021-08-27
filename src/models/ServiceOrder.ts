@@ -70,6 +70,9 @@ class ServiceOrder {
   @Column()
   materials_total_cost: number;
 
+  @Column()
+  total_cost: number;
+
   @CreateDateColumn()
   created_at: Date;
 
