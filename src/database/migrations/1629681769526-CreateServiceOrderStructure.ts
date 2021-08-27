@@ -12,7 +12,7 @@ export class CreateServiceOrderStructure1629681769526
       `CREATE TABLE "technicians" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_b14514b23605f79475be53065b3" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "service_orders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "number" character varying NOT NULL, "running" boolean, "completed" boolean, "closed" boolean, "man_power_cost" integer NOT NULL, "displacement_cost" integer NOT NULL, "materials" text NOT NULL, "materials_total_cost" integer, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "sellerId" uuid, "clientId" uuid, "technicianId" uuid, CONSTRAINT "PK_914aa74962ee83b10614ea2095d" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "service_orders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "number" character varying NOT NULL, "running" boolean, "completed" boolean, "closed" boolean, "man_power_cost" integer NOT NULL, "displacement_cost" integer NOT NULL, "materials" text NOT NULL, "materials_total_cost" character varying, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "sellerId" uuid, "clientId" uuid, "technicianId" uuid, CONSTRAINT "PK_914aa74962ee83b10614ea2095d" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "clients" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f1ab7cf3a5714dbc6bb4e1c28a4" PRIMARY KEY ("id"))`,

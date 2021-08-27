@@ -14,7 +14,7 @@ export interface RequestCreateServiceOrder {
   man_power_cost: number;
   displacement_cost: number;
   materials: ServiceOrder['materials'];
-  materials_total_cost: number;
+  materials_total_cost: string;
   sellerId: Seller;
   clientId: Client;
   technicianId: Technician;

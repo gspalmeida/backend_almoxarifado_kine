@@ -17,7 +17,7 @@ import Technician from './Technician';
 class ServiceOrder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  // TODO make number unique
   @Column()
   number: string;
 
@@ -68,7 +68,7 @@ class ServiceOrder {
   ];
 
   @Column({ nullable: true })
-  materials_total_cost: number;
+  materials_total_cost: string;
 
   @Column({ nullable: true })
   total_cost: number;
