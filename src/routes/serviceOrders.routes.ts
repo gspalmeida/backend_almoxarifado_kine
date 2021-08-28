@@ -11,7 +11,7 @@ import CreateServiceOrder from '../services/CreateServiceOrderService';
 const serviceOrdersRouter = Router();
 
 serviceOrdersRouter.post('/', async (request, response) => {
-  console.log('Entrou no post serviceOrders');
+  console.log('Entrou no POST /serviceOrders');
 
   const {
     number,
@@ -27,10 +27,7 @@ serviceOrdersRouter.post('/', async (request, response) => {
     technicianId,
   } = request.body as RequestCreateServiceOrder;
 
-  console.log('\n\n\n request.body', request.body);
-
   const createServiceOrder = new CreateServiceOrder();
-  console.log('antes do await');
 
   const serviceOrder = await createServiceOrder.execute({
     number,
@@ -46,21 +43,18 @@ serviceOrdersRouter.post('/', async (request, response) => {
     technicianId,
   });
 
-  console.log('depois do await');
-
   return response.json(serviceOrder);
 });
 
 serviceOrdersRouter.get('/', async (request, response) => {
-  console.log('\n\n\n\n Entrou no get ServiceOrders');
+  console.log('\n\n\n\n Entrou no GET /serviceOrders');
   const serviceOrdersRepository = getRepository(ServiceOrder);
   try {
     const serviceOrders = await serviceOrdersRepository.find();
-    console.log(serviceOrders);
 
     return response.json(serviceOrders);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    throw new AppError('Nenhuma ordem de serviço encontrada', 404);
   }
 });
 
@@ -71,14 +65,14 @@ serviceOrdersRouter.get('/:id', async (request, response) => {
 
   const serviceOrdersRepository = getRepository(ServiceOrder);
   try {
-    const serviceOrders = await serviceOrdersRepository.findOne({
+    const serviceOrder = await serviceOrdersRepository.findOne({
       where: { id },
     });
-    console.log(serviceOrders);
+    console.log(serviceOrder);
 
-    return response.json(serviceOrders);
+    return response.json(serviceOrder);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    throw new AppError('Ordem de serviço não encontrada', 404);
   }
 });
 
@@ -94,12 +88,12 @@ serviceOrdersRouter.patch('/open/:id', async (request, response) => {
       completed: false,
       closed: false,
     });
-    const serviceOrders = await serviceOrdersRepository.findOne(id);
-    console.log(serviceOrders);
+    const serviceOrder = await serviceOrdersRepository.findOne(id);
+    console.log(serviceOrder);
 
-    return response.json(serviceOrders);
+    return response.json(serviceOrder);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    throw new AppError('Ordem de serviço não encontrada', 404);
   }
 });
 
@@ -115,12 +109,12 @@ serviceOrdersRouter.patch('/close/:id', async (request, response) => {
       completed: true,
       closed: false,
     });
-    const serviceOrders = await serviceOrdersRepository.findOne(id);
-    console.log(serviceOrders);
+    const serviceOrder = await serviceOrdersRepository.findOne(id);
+    console.log(serviceOrder);
 
-    return response.json(serviceOrders);
+    return response.json(serviceOrder);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    throw new AppError('Ordem de serviço não encontrada', 404);
   }
 });
 
@@ -135,19 +129,16 @@ serviceOrdersRouter.patch('/terminate/:id', async (request, response) => {
     await serviceOrdersRepository.update(id, {
       displacement_cost,
       man_power_cost,
-    });
-
-    await serviceOrdersRepository.update(id, {
       running: false,
       completed: false,
       closed: true,
     });
-    const serviceOrders = await serviceOrdersRepository.findOne(id);
-    console.log(serviceOrders);
+    const serviceOrder = await serviceOrdersRepository.findOne(id);
+    console.log(serviceOrder);
 
-    return response.json(serviceOrders);
+    return response.json(serviceOrder);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    throw new AppError('Ordem de serviço não encontrada', 404);
   }
 });
 
@@ -168,7 +159,6 @@ serviceOrdersRouter.post(
         product_name,
         qty: Number(qty),
       });
-      console.log('Material Retornou ao estoque');
       return response.json(serviceOrder);
     } catch (error) {
       console.log(error);
