@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import AppError from '../errors/AppError';
 
-import UpdateServiceOrderMaterialService from '../services/UpdateServiceOrderMaterialService';
+import ServiceOrderAddMaterialService from '../services/ServiceOrderAddMaterialService';
 import AlterProductQtyStockedService from '../services/AlterProductQtyStockedService';
 
 const addMaterialRouter = Router();
@@ -13,10 +13,10 @@ addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
 
   const { product_id, qty } = request.body;
 
-  const pushNewMaterial = new UpdateServiceOrderMaterialService();
+  const addMaterialToServiceOrder = new ServiceOrderAddMaterialService();
   const removeProductFromInventory = new AlterProductQtyStockedService();
   try {
-    const serviceOrder = await pushNewMaterial.execute({
+    const serviceOrder = await addMaterialToServiceOrder.execute({
       serviceOrderId,
       product_id,
       qty,
@@ -30,7 +30,7 @@ addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
     return response.json(serviceOrder);
   } catch (error) {
     throw new AppError(
-      `Campos obrigatórios: serviceOrderId:${serviceOrderId}, product_id:${product_id}, qty:${qty}`,
+      `Erro ao alocar material na OS => serviceOrderId:${serviceOrderId}, product_id:${product_id}, qty:${qty}`,
       500,
     );
   }
