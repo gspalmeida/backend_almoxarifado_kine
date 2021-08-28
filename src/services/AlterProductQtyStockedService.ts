@@ -31,8 +31,6 @@ class AlterProductQtyStockedService {
           where: { name },
         });
       }
-      console.log('AlterProductQtyService\n\n idOrName:', name, id);
-      console.log('\n oldProductData:', oldProductData);
 
       if (!oldProductData) {
         throw new AppError('Produto não encontrado no estoque', 404);
@@ -51,18 +49,12 @@ class AlterProductQtyStockedService {
           qty_stocked: newQtyStocked,
         };
       }
-      console.log('\n\nchange', changeQty);
-      console.log('new', newProductData.qty_stocked);
-      console.log('complete', newProductData);
       if (actionType === 'addition') {
         newProductData = {
           ...oldProductData,
           qty_stocked: oldProductData.qty_stocked + changeQty,
         };
       }
-      console.log('\n\nchange', changeQty);
-      console.log('new', newProductData.qty_stocked);
-      console.log('complete', newProductData);
       const updatedProduct = await productRepository.save(newProductData);
       return updatedProduct;
     } catch (error) {
