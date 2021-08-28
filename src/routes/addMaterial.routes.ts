@@ -7,7 +7,7 @@ import UpdateServiceOrderMaterialService from '../services/UpdateServiceOrderMat
 const addMaterialRouter = Router();
 
 // TODO Migrar essa rota para dentro de /serviceOrders/:serviceOrderId/addMaterial
-addMaterialRouter.post('/:id', async (request, response) => {
+addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
   const { serviceOrderId } = request.params;
 
   const { product_id, qty } = request.body;
