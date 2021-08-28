@@ -49,7 +49,7 @@ class UpdateServiceOrderMaterialService {
       );
     }
     serviceOrder = await serviceOrderRepository.findOneOrFail({
-      where: { serviceOrderId },
+      where: { id: serviceOrderId },
     });
     return serviceOrder;
   }
