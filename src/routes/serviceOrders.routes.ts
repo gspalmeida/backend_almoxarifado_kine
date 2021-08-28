@@ -4,9 +4,10 @@ import AppError from '../errors/AppError';
 import { getRepository } from 'typeorm';
 import ServiceOrder from '../models/ServiceOrder';
 import { RequestCreateServiceOrder } from '../services/CreateServiceOrderService';
-import ReturnMaterialService from '../services/ReturnMaterialService';
+import ServiceOrderReturnMaterialService from '../services/ServiceOrderReturnMaterialService';
 
 import CreateServiceOrder from '../services/CreateServiceOrderService';
+import AlterProductQtyStockedService from '../services/AlterProductQtyStockedService';
 
 const serviceOrdersRouter = Router();
 
@@ -151,7 +152,8 @@ serviceOrdersRouter.post(
 
     const { product_name, qty } = request.body;
 
-    const returnMaterial = new ReturnMaterialService();
+    const returnMaterial = new ServiceOrderReturnMaterialService();
+    const addProductToInventory = new AlterProductQtyStockedService();
 
     try {
       const serviceOrder = await returnMaterial.execute({
@@ -159,12 +161,19 @@ serviceOrdersRouter.post(
         product_name,
         qty: Number(qty),
       });
+      const newProductState = await addProductToInventory.execute({
+        name: product_name,
+        changeQty: qty,
+        actionType: 'addition',
+      });
+      console.log(newProductState);
+
       return response.json(serviceOrder);
     } catch (error) {
       console.log(error);
 
       throw new AppError(
-        `Campos obrigatórios: serviceOrderId:${serviceOrderId}, product_name:${product_name}, qty:${qty}`,
+        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${product_name}, qty:${qty}`,
         500,
       );
     }
