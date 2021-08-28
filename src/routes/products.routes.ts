@@ -54,11 +54,6 @@ productsRouter.get('/', async (request, response) => {
       });
       if (findProduct) {
         products.push(findProduct);
-      } else {
-        throw new AppError(
-          `Nenhum produto encontrado com name=${nameFilter}`,
-          500,
-        );
       }
     } else {
       const findProducts = await productsRepository.find();
@@ -67,7 +62,14 @@ productsRouter.get('/', async (request, response) => {
 
     return response.json(products);
   } catch (error) {
-    throw new AppError('Nenhum produto encontrado', 500);
+    if (error.request.query.name) {
+      throw new AppError(
+        `Nenhum produto encontrado com name=${nameFilter}`,
+        500,
+      );
+    } else {
+      throw new AppError('Nenhum produto encontrado', 500);
+    }
   }
 });
 
