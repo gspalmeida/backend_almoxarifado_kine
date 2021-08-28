@@ -3,6 +3,7 @@ import { Router } from 'express';
 import AppError from '../errors/AppError';
 
 import UpdateServiceOrderMaterialService from '../services/UpdateServiceOrderMaterialService';
+import AlterProductQtyStockedService from '../services/AlterProductQtyStockedService';
 
 const addMaterialRouter = Router();
 
@@ -13,12 +14,19 @@ addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
   const { product_id, qty } = request.body;
 
   const pushNewMaterial = new UpdateServiceOrderMaterialService();
+  const removeProductFromInventory = new AlterProductQtyStockedService();
   try {
     const serviceOrder = await pushNewMaterial.execute({
       serviceOrderId,
       product_id,
       qty,
     });
+    const newProductState = await removeProductFromInventory.execute({
+      id: product_id,
+      changeQty: qty,
+      actionType: 'subtraction',
+    });
+
     return response.json(serviceOrder);
   } catch (error) {
     throw new AppError(
