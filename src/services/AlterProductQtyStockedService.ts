@@ -3,46 +3,66 @@ import { getRepository } from 'typeorm';
 import Product from '../models/Product';
 import AppError from '../errors/AppError';
 
-export interface AlterProductQtyStockedService {
-  id: Product['id'];
+export interface RequestAlterProductQtyStocked {
+  id?: Product['id'];
+  name?: Product['name'];
   changeQty: number;
   actionType: 'subtraction' | 'addition';
 }
-class RemoveProductFromInventoryService {
+class AlterProductQtyStockedService {
   public async execute({
     id,
+    name,
     changeQty,
     actionType,
-  }: AlterProductQtyStockedService): Promise<Product> {
+  }: RequestAlterProductQtyStocked): Promise<Product> {
     try {
       const productRepository = getRepository(Product);
       let newProductData = {} as Product;
+      let oldProductData;
 
-      const productAlreadyExists = await productRepository.findOne({
-        where: { id },
-      });
+      if (id) {
+        oldProductData = await productRepository.findOne({
+          where: { id },
+        });
+      }
+      if (name) {
+        oldProductData = await productRepository.findOne({
+          where: { name },
+        });
+      }
+      console.log('AlterProductQtyService\n\n idOrName:', name, id);
+      console.log('\n oldProductData:', oldProductData);
 
-      if (!productAlreadyExists) {
-        console.log('Antes do app error de not found');
+      if (!oldProductData) {
         throw new AppError('Produto não encontrado no estoque', 404);
       }
-      console.log('\n\n\n\n\nold', productAlreadyExists.qty_stocked);
 
       if (actionType === 'subtraction') {
+        const newQtyStocked = oldProductData.qty_stocked - changeQty;
+        if (newQtyStocked < 0) {
+          throw new AppError(
+            'Você está tentando alocar mais itens a uma Ordem de Servico do que a quantidade disponível em estoque',
+            400,
+          );
+        }
         newProductData = {
-          ...productAlreadyExists,
-          qty_stocked: productAlreadyExists.qty_stocked - changeQty,
+          ...oldProductData,
+          qty_stocked: newQtyStocked,
         };
       }
-      console.log('\n\n\n\n\nchange', changeQty);
-      console.log('\n\n\n\n\nnew', newProductData.qty_stocked);
-      console.log('\n\n\n\n\ncomplete', newProductData);
+      console.log('\n\nchange', changeQty);
+      console.log('new', newProductData.qty_stocked);
+      console.log('complete', newProductData);
       if (actionType === 'addition') {
         newProductData = {
-          ...productAlreadyExists,
-          qty_stocked: productAlreadyExists.qty_stocked + changeQty,
+          ...oldProductData,
+          qty_stocked: oldProductData.qty_stocked + changeQty,
         };
       }
+      console.log('\n\nchange', changeQty);
+      console.log('new', newProductData.qty_stocked);
+      console.log('complete', newProductData);
       const updatedProduct = await productRepository.save(newProductData);
       return updatedProduct;
     } catch (error) {
@@ -53,4 +73,4 @@ class RemoveProductFromInventoryService {
     }
   }
 }
-export default RemoveProductFromInventoryService;
+export default AlterProductQtyStockedService;
