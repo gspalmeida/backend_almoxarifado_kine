@@ -3,7 +3,7 @@ import { Router } from 'express';
 import AppError from '../errors/AppError';
 import { getRepository } from 'typeorm';
 import Product from '../models/Product';
-import { RequestCreateUser } from '../services/CreateProductService';
+import { RequestCreateProduct } from '../services/CreateProductService';
 
 import CreateProductService from '../services/CreateProductService';
 
@@ -22,7 +22,7 @@ productsRouter.post('/', async (request, response) => {
     lastSupplierId,
     unitMeasureId,
     totalPurchaseAmount,
-  } = request.body as RequestCreateUser;
+  } = request.body as RequestCreateProduct;
 
   const createProduct = new CreateProductService();
 

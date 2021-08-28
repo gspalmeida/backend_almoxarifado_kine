@@ -6,7 +6,7 @@ import MeasureUnit from '../models/MeasureUnit';
 import Supplier from '../models/Supplier';
 import CostCenter from '../models/CostCenter';
 
-export interface RequestCreateUser {
+export interface RequestCreateProduct {
   name: string;
   description?: string;
   unit_cost: string;
@@ -32,7 +32,7 @@ class CreateProductService {
     lastSupplierId,
     costCenterId,
     totalPurchaseAmount,
-  }: RequestCreateUser): Promise<Product> {
+  }: RequestCreateProduct): Promise<Product> {
     const productRepository = getRepository(Product);
     console.log('Entrou no service de produtos');
 
@@ -40,7 +40,7 @@ class CreateProductService {
       where: { name },
     });
 
-    let product: RequestCreateUser = {
+    let product: RequestCreateProduct = {
       name,
       qty_ordered,
       unit_cost,
@@ -49,15 +49,11 @@ class CreateProductService {
       costCenterId,
     };
 
-    //Logica para preenchimento das variáveis de acordo com as regras de negócio estabelecidas
-
-    //Preenche o campo description
     if (!description) {
       description = `Valor total da nota fiscal: ${totalPurchaseAmount}`;
       product = { ...product, description };
-    } else {
-      product = { ...product, description };
     }
+
     if (productAlreadyExists) {
       console.log('\n\n\nEntrou no update');
       qty_last_order = productAlreadyExists.qty_ordered;
@@ -106,7 +102,6 @@ class CreateProductService {
       const newProduct = await productRepository.save(createProduct);
       return newProduct;
     }
-    //Fim das Regras de Negócio pro Salvamento de Produtos
   }
 }
 export default CreateProductService;
