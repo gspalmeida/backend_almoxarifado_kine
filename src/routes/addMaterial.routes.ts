@@ -11,26 +11,27 @@ const addMaterialRouter = Router();
 addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
   const { serviceOrderId } = request.params;
 
-  const { product_id, qty } = request.body;
+  const { product_id: productId, qty } = request.body;
 
   const addMaterialToServiceOrder = new ServiceOrderAddMaterialService();
   const removeProductFromInventory = new AlterProductQtyStockedService();
   try {
     const serviceOrder = await addMaterialToServiceOrder.execute({
       serviceOrderId,
-      product_id,
+      productId,
       qty,
     });
     const newProductState = await removeProductFromInventory.execute({
-      id: product_id,
+      id: productId,
       changeQty: qty,
       actionType: 'subtraction',
     });
+    console.log(`Product after change inventory state: ${newProductState}`);
 
     return response.json(serviceOrder);
   } catch (error) {
     throw new AppError(
-      `Erro ao alocar material na OS => serviceOrderId:${serviceOrderId}, product_id:${product_id}, qty:${qty}`,
+      `Erro ao alocar material na OS => serviceOrderId:${serviceOrderId}, product_id:${productId}, qty:${qty}`,
       500,
     );
   }

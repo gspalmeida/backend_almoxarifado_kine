@@ -4,9 +4,9 @@ import ServiceOrder from '../models/ServiceOrder';
 import Product from '../models/Product';
 import AppError from '../errors/AppError';
 
-interface materialProps {
+interface AddMaterialRequestProps {
   serviceOrderId: string;
-  product_id: string;
+  productId: string;
   qty: number;
 }
 
@@ -14,44 +14,108 @@ class ServiceOrderAddMaterialService {
   public async execute({
     serviceOrderId,
     qty,
-    product_id,
-  }: materialProps): Promise<ServiceOrder> {
-    const serviceOrderRepository = getRepository(ServiceOrder);
-    const productOrderRepository = getRepository(Product);
-    console.log('Entrou no service ServiceOrderAddMaterialService');
+    productId,
+  }: AddMaterialRequestProps): Promise<ServiceOrder> {
+    const serviceOrdersRepository = getRepository(ServiceOrder);
+    const productsRepository = getRepository(Product);
+    console.log('Entrou no ServiceOrderAddMaterialService');
 
-    let serviceOrder = await serviceOrderRepository.findOne({
+    let serviceOrder = await serviceOrdersRepository.findOne({
       where: { id: serviceOrderId },
     });
 
-    let newMaterial = await productOrderRepository.findOne({
-      where: { id: product_id },
+    let productInStock = await productsRepository.findOne({
+      where: { id: productId },
     });
 
-    if (!serviceOrder && !newMaterial) {
-      console.log(
-        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}`,
-      );
+    if (!productInStock) {
+      console.log(`Produto não encontrado no estoque: productId:${productId}`);
       throw new AppError(
-        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}`,
+        `Produto não encontrado no estoque: productId:${productId}`,
         500,
       );
     }
-    const totalCost = Number(newMaterial!.unit_cost) * qty;
-    // TODO Corrigir essa lógica pois ela gera registros duplicados ao invés de incrementar a quantidade
-    await serviceOrderRepository.update(serviceOrderId, {
-      materials: [
-        ...serviceOrder!.materials,
-        {
-          name: newMaterial!.name,
-          qty,
-          unit_cost: newMaterial!.unit_cost,
-          total_cost: totalCost,
-        },
-      ],
-    });
+    if (productInStock.qty_stocked < qty) {
+      console.log(
+        `Você entá tentando adicionar mais materiais na OS do que a quantidade disponível em estoque. \n
+         Estoque atual:${productInStock.qty_stocked} \n 
+         Quantidade Informada: ${qty}`,
+      );
+      throw new AppError(
+        `Você entá tentando adicionar mais materiais na OS do que a quantidade disponível em estoque`,
+        400,
+      );
+    }
+    if (!serviceOrder) {
+      console.log(
+        `Ordem de serviço não encontrada: serviceOrderId:${serviceOrderId}`,
+      );
+      throw new AppError(
+        `Ordem de serviço não encontrada: serviceOrderId:${serviceOrderId}`,
+        500,
+      );
+    }
+    const totalCost = Number(productInStock?.unit_cost) * qty;
+    if (!totalCost) {
+      console.log(
+        `Falha ao calcular o custo total do material alocado:\n
+         productInStock?.unit_cost:${productInStock?.unit_cost}\n 
+         qty: ${qty}`,
+      );
+      throw new AppError(
+        `Falha ao calcular o custo total do material alocado:\n
+         productInStock?.unit_cost:${productInStock?.unit_cost}\n 
+         qty: ${qty}`,
+        500,
+      );
+    }
+    const serviceOrderMaterialAlreadyExists = serviceOrder.materials.find(
+      material => material.name === productInStock?.name,
+    );
 
-    serviceOrder = await serviceOrderRepository.findOneOrFail({
+    if (serviceOrderMaterialAlreadyExists) {
+      let otherMaterials = serviceOrder.materials.filter(
+        el => el.name !== serviceOrderMaterialAlreadyExists.name,
+      );
+
+      const newQty = serviceOrderMaterialAlreadyExists.qty + qty;
+      const newTotalCost = newQty * Number(productInStock.unit_cost);
+      const updatedMaterial = {
+        name: productInStock!.name,
+        qty: newQty,
+        unit_cost: productInStock!.unit_cost,
+        total_cost: newTotalCost,
+      };
+
+      const updatedServiceOrder = await serviceOrdersRepository.update(
+        serviceOrderId,
+        {
+          materials: [...otherMaterials, updatedMaterial],
+        },
+      );
+      console.log(`After update an old material: ${updatedServiceOrder}`);
+
+      serviceOrder = await serviceOrdersRepository.findOneOrFail({
+        where: { id: serviceOrderId },
+      });
+      return serviceOrder;
+    }
+    const updatedServiceOrder = await serviceOrdersRepository.update(
+      serviceOrderId,
+      {
+        materials: [
+          ...serviceOrder!.materials,
+          {
+            name: productInStock!.name,
+            qty,
+            unit_cost: productInStock!.unit_cost,
+            total_cost: totalCost,
+          },
+        ],
+      },
+    );
+    console.log(`After add new material: ${updatedServiceOrder}`);
+    serviceOrder = await serviceOrdersRepository.findOneOrFail({
       where: { id: serviceOrderId },
     });
     return serviceOrder;
