@@ -49,11 +49,23 @@ serviceOrdersRouter.post('/', async (request, response) => {
 
 serviceOrdersRouter.get('/', async (request, response) => {
   console.log('\n\n\n\n Entrou no GET /serviceOrders');
-  const serviceOrdersRepository = getRepository(ServiceOrder);
-  try {
-    const serviceOrders = await serviceOrdersRepository.find();
 
-    return response.json(serviceOrders);
+  const numberFilter = request.query.number;
+
+  const serviceOrdersRepository = getRepository(ServiceOrder);
+
+  let serviceOrders: ServiceOrder[] = [];
+
+  try {
+    if (numberFilter) {
+      const findProduct = await serviceOrdersRepository.findOne({
+        where: { number: numberFilter },
+      });
+      return response.json(findProduct);
+    } else {
+      const findProducts = await serviceOrdersRepository.find();
+      return response.json(findProducts);
+    }
   } catch (error) {
     throw new AppError('Nenhuma ordem de serviço encontrada', 404);
   }

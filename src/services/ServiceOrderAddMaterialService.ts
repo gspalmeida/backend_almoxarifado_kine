@@ -28,12 +28,12 @@ class ServiceOrderAddMaterialService {
       where: { id: product_id },
     });
 
-    if (serviceOrder && newMaterial && newMaterial?.unit_cost) {
+    if (!serviceOrder && !newMaterial) {
       console.log(
-        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}, newMaterial.unit_cost:${newMaterial?.unit_cost}`,
+        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}`,
       );
       throw new AppError(
-        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}, newMaterial.unit_cost:${newMaterial?.unit_cost}`,
+        `Campos obrigatórios: serviceOrder:${serviceOrder}, newMaterial:${newMaterial}`,
         500,
       );
     }
