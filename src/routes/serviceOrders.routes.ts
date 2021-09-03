@@ -158,34 +158,37 @@ serviceOrdersRouter.patch('/terminate/:id', async (request, response) => {
 serviceOrdersRouter.post(
   '/returnMaterial/:serviceOrderId',
   async (request, response) => {
-    console.log('\n\n\n\n Entrou no GET returnMaterial/:id');
+    console.log('\n\n Entrou no POST returnMaterial/:serviceOrderId');
 
     const { serviceOrderId } = request.params;
 
-    const { product_name, qty } = request.body;
+    const { product_name: productName, qty } = request.body;
 
-    const returnMaterial = new ServiceOrderReturnMaterialService();
-    const addProductToInventory = new AlterProductQtyStockedService();
+    const returnMaterialService = new ServiceOrderReturnMaterialService();
+    const addProductToInventoryService = new AlterProductQtyStockedService();
 
     try {
-      const serviceOrder = await returnMaterial.execute({
+      const updatedServiceOrder = await returnMaterialService.execute({
         serviceOrderId,
-        product_name,
+        returnedProductName: productName,
         qty: Number(qty),
       });
-      const newProductState = await addProductToInventory.execute({
-        name: product_name,
+      const updatedProduct = await addProductToInventoryService.execute({
+        name: productName,
         changeQty: qty,
         actionType: 'addition',
       });
-      console.log(newProductState);
+      console.log('\n\n New product state:\n', updatedProduct);
 
-      return response.json(serviceOrder);
+      return response.json(updatedServiceOrder);
     } catch (error) {
-      console.log(error);
+      console.log(
+        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${productName}, qty:${qty} \n error: ${error}`,
+        error,
+      );
 
       throw new AppError(
-        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${product_name}, qty:${qty}`,
+        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${productName}, qty:${qty} \n error: ${error}`,
         500,
       );
     }
