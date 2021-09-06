@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import ServiceOrder from '../models/ServiceOrder';
 import Product from '../models/Product';
 import AppError from '../errors/AppError';
+import AlterServiceOrderTotalCostService from './AlterServiceOrderTotalCostService';
 
 interface AddMaterialRequestProps {
   serviceOrderId: string;
@@ -55,8 +56,8 @@ class ServiceOrderAddMaterialService {
         500,
       );
     }
-    const totalCost = Number(productInStock?.unit_cost) * qty;
-    if (!totalCost) {
+    const materialTotalCost = Number(productInStock?.unit_cost) * qty;
+    if (!materialTotalCost) {
       console.log(
         `Falha ao calcular o custo total do material alocado:\n
          productInStock?.unit_cost:${productInStock?.unit_cost}\n 
@@ -94,6 +95,15 @@ class ServiceOrderAddMaterialService {
         },
       );
       console.log(`After update an old material: ${updatedServiceOrder}`);
+      const serviceOrderTotalCostAfterUpdateMaterials =
+        newTotalCost - serviceOrderMaterialAlreadyExists.total_cost;
+      const updateServiceOrderTotalCost = new AlterServiceOrderTotalCostService();
+      const updatedTotalCost = await updateServiceOrderTotalCost.execute({
+        serviceOrderId,
+        value: serviceOrderTotalCostAfterUpdateMaterials,
+        actionType: 'addition',
+      });
+      console.log(`After update serviceOrder.totalCost: ${updatedTotalCost}`);
 
       serviceOrder = await serviceOrdersRepository.findOneOrFail({
         where: { id: serviceOrderId },
@@ -109,12 +119,19 @@ class ServiceOrderAddMaterialService {
             name: productInStock!.name,
             qty,
             unit_cost: productInStock!.unit_cost,
-            total_cost: totalCost,
+            total_cost: materialTotalCost,
           },
         ],
       },
     );
     console.log(`After add new material: ${updatedServiceOrder}`);
+    const updateServiceOrderTotalCost = new AlterServiceOrderTotalCostService();
+    const updatedTotalCost = await updateServiceOrderTotalCost.execute({
+      serviceOrderId,
+      value: materialTotalCost,
+      actionType: 'addition',
+    });
+    console.log(`After update serviceOrder.totalCost: ${updatedTotalCost}`);
     serviceOrder = await serviceOrdersRepository.findOneOrFail({
       where: { id: serviceOrderId },
     });

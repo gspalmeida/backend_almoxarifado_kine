@@ -2,6 +2,7 @@
 import { getRepository } from 'typeorm';
 import ServiceOrder from '../models/ServiceOrder';
 import AppError from '../errors/AppError';
+import AlterServiceOrderTotalCostService from './AlterServiceOrderTotalCostService';
 
 interface RequestReturnMaterial {
   serviceOrderId: string;
@@ -26,10 +27,10 @@ class ServiceOrderReturnMaterialService {
     let serviceOrder = await serviceOrderRepository.findOne({
       where: { id: serviceOrderId },
     });
-
     if (!serviceOrder) {
       throw new AppError(`Ordem de serviço não encontrada`, 404);
     }
+
     const productToReturn = serviceOrder.materials.find(
       material => material.name === returnedProductName,
     );
@@ -47,13 +48,15 @@ class ServiceOrderReturnMaterialService {
       );
     }
 
-    const newQty = productToReturn.qty - qty;
+    const newMaterialQty = productToReturn.qty - qty;
+    const newMaterialTotalCost =
+      Number(productToReturn.unit_cost) * newMaterialQty;
 
     let returnedMaterial: ServiceOrderMaterialProps = {
       name: productToReturn.name,
       unit_cost: productToReturn.unit_cost,
-      qty: newQty,
-      total_cost: Number(productToReturn.unit_cost) * newQty,
+      qty: newMaterialQty,
+      total_cost: newMaterialTotalCost,
     };
 
     let notRetunedMaterials = serviceOrder.materials.filter(
@@ -63,6 +66,15 @@ class ServiceOrderReturnMaterialService {
     await serviceOrderRepository.update(serviceOrderId, {
       materials: [...notRetunedMaterials, returnedMaterial!],
     });
+    const serviceOrderTotalCostAfterUpdateMaterials =
+      productToReturn.total_cost - newMaterialTotalCost;
+    const updateServiceOrderTotalCost = new AlterServiceOrderTotalCostService();
+    const updatedTotalCost = await updateServiceOrderTotalCost.execute({
+      serviceOrderId,
+      value: serviceOrderTotalCostAfterUpdateMaterials,
+      actionType: 'subtraction',
+    });
+    console.log(`After update serviceOrder.totalCost: ${updatedTotalCost}`);
 
     serviceOrder = await serviceOrderRepository.findOneOrFail({
       where: { id: serviceOrderId },
