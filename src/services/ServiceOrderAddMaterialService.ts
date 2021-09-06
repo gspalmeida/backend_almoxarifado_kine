@@ -57,6 +57,7 @@ class ServiceOrderAddMaterialService {
       );
     }
     const materialTotalCost = Number(productInStock?.unit_cost) * qty;
+    console.log(materialTotalCost);
     if (!materialTotalCost) {
       console.log(
         `Falha ao calcular o custo total do material alocado:\n
