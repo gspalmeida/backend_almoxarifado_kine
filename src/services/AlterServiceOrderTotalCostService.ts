@@ -47,7 +47,7 @@ class AlterServiceOrderTotalCostService {
       const updatedServiceOrder = await serviceOrderRepository.update(
         serviceOrder.id,
         {
-          total_cost: Number(newTotalCost),
+          total_cost: newTotalCost,
         },
       );
       console.log(

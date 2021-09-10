@@ -70,7 +70,7 @@ class ServiceOrder {
   @Column({ nullable: true })
   materials_total_cost: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   total_cost: number;
 
   @CreateDateColumn()
