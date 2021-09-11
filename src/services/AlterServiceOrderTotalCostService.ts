@@ -43,7 +43,8 @@ class AlterServiceOrderTotalCostService {
         }
       }
       if (actionType === 'addition') {
-        Math.round((serviceOrder.total_cost + value) * 100) / 100;
+        newTotalCost =
+          Math.round((serviceOrder.total_cost + value) * 100) / 100;
       }
       const updatedServiceOrder = await serviceOrderRepository.update(
         serviceOrder.id,
