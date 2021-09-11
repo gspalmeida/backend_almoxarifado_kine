@@ -33,7 +33,8 @@ class AlterServiceOrderTotalCostService {
       }
 
       if (actionType === 'subtraction') {
-        newTotalCost = serviceOrder.total_cost - value;
+        newTotalCost =
+          Math.round((serviceOrder.total_cost - value) * 100) / 100;
         if (newTotalCost < 0) {
           throw new AppError(
             'O valor a ser deduzido da OS é maior que o seu custo total atual',
