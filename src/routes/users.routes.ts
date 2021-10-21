@@ -51,4 +51,46 @@ usersRouter.get('/', ensureAuthenticated, async (request, response) => {
   }
 });
 
+usersRouter.get('/details', ensureAuthenticated, async (request, response) => {
+  console.log('\n\n\n\n Entrou no get UsersDetais');
+  const usersRouterRepository = getRepository(User);
+  try {
+    const user = await usersRouterRepository.findOne(request.user.id);
+    console.log(user);
+
+    return response.json(user);
+  } catch (error) {
+    throw new AppError('Nenhum Usuário encontrado', 500);
+  }
+});
+
+usersRouter.patch(
+  '/avatar',
+  upload.single('avatar'),
+  ensureAuthenticated,
+  async (request, response) => {
+    console.log('\n\n\n\n Entrou no patch /user/avatar;');
+
+    if (!request.file) {
+      throw new AppError('Nenhuma imagem encontrada', 500);
+    }
+
+    const avatar = request.file.filename;
+    const usersRouterRepository = getRepository(User);
+    try {
+      await usersRouterRepository.update(request.user.id, {
+        avatar,
+      });
+
+      const user = await usersRouterRepository.findOne(request.user.id);
+
+      console.log(user);
+
+      return response.json(user);
+    } catch (error) {
+      throw new AppError('Nenhum Usuário encontrado', 500);
+    }
+  },
+);
+
 export default usersRouter;
