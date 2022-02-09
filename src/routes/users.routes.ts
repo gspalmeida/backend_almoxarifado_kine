@@ -42,10 +42,10 @@ usersRouter.get('/', ensureAuthenticated, async (request, response) => {
   console.log('\n\n\n\n Entrou no get Users');
   const usersRouterRepository = getRepository(User);
   try {
-    const usersRouter = await usersRouterRepository.find();
-    console.log(usersRouter);
+    const users = await usersRouterRepository.find();
+    console.log(users);
 
-    return response.json(usersRouter);
+    return response.json(users);
   } catch (error) {
     throw new AppError('Nenhum Usuário encontrado', 500);
   }
