@@ -5,9 +5,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
   ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import Seller from './Seller';
 import Client from './Client';

@@ -37,7 +37,7 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
 
   return response.json(user);
 });
-
+// FIXME Essa rota deveria mesmo existir ou somente admins podem acessar esse conteúdo?
 usersRouter.get('/', ensureAuthenticated, async (request, response) => {
   console.log('\n\n\n\n Entrou no get Users');
   const usersRouterRepository = getRepository(User);
