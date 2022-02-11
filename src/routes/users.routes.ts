@@ -23,28 +23,21 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
   if (request.file) {
     avatar = request.file.filename;
   }
-
   const createUser = new CreateUserService();
-
   const user: UserWithoutPassword = await createUser.execute({
     name,
     email,
     password,
     avatar,
   });
-
   delete user.password;
-
   return response.json(user);
 });
 // FIXME Essa rota deveria mesmo existir ou somente admins podem acessar esse conteúdo?
 usersRouter.get('/', ensureAuthenticated, async (request, response) => {
-  console.log('\n\n\n\n Entrou no get Users');
   const usersRouterRepository = getRepository(User);
   try {
     const users = await usersRouterRepository.find();
-    console.log(users);
-
     return response.json(users);
   } catch (error) {
     throw new AppError('Nenhum Usuário encontrado', 500);
@@ -52,12 +45,9 @@ usersRouter.get('/', ensureAuthenticated, async (request, response) => {
 });
 
 usersRouter.get('/details', ensureAuthenticated, async (request, response) => {
-  console.log('\n\n\n\n Entrou no get UsersDetais');
   const usersRouterRepository = getRepository(User);
   try {
     const user = await usersRouterRepository.findOne(request.user.id);
-    console.log(user);
-
     return response.json(user);
   } catch (error) {
     throw new AppError('Nenhum Usuário encontrado', 500);
@@ -69,23 +59,16 @@ usersRouter.patch(
   upload.single('avatar'),
   ensureAuthenticated,
   async (request, response) => {
-    console.log('\n\n\n\n Entrou no patch /user/avatar;');
-
     if (!request.file) {
       throw new AppError('Nenhuma imagem encontrada', 500);
     }
-
     const avatar = request.file.filename;
     const usersRouterRepository = getRepository(User);
     try {
       await usersRouterRepository.update(request.user.id, {
         avatar,
       });
-
       const user = await usersRouterRepository.findOne(request.user.id);
-
-      console.log(user);
-
       return response.json(user);
     } catch (error) {
       throw new AppError('Nenhum Usuário encontrado', 500);
