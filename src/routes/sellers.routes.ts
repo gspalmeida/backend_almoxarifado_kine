@@ -6,6 +6,7 @@ import Seller from '../models/Seller';
 
 import CreateSellerService from '../services/CreateSellerService';
 import DeleteSellerService from '../services/DeleteSellerService';
+import UpdateSellerService from '../services/UpdateSellerService';
 
 const sellersRouter = Router();
 
@@ -47,6 +48,18 @@ sellersRouter.delete('/:id', async (request, response) => {
   });
 
   return response.json(deletedSeller);
+});
+
+sellersRouter.patch('/', async (request, response) => {
+  const { id, newName } = request.body;
+
+  const updateSeller = new UpdateSellerService();
+  const updatedSeller = await updateSeller.execute({
+    id,
+    name: newName,
+  });
+
+  return response.json(updatedSeller);
 });
 
 export default sellersRouter;
