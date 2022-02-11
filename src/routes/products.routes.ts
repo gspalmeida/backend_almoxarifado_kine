@@ -62,9 +62,9 @@ productsRouter.get('/', async (request, response) => {
 
     return response.json(products);
   } catch (error) {
-    if (error.request.query.name) {
+    if (nameFilter) {
       throw new AppError(
-        `Nenhum produto encontrado com name=${nameFilter}`,
+        `Nenhum produto encontrado com name=${nameFilter}. Erro: ${error}`,
         500,
       );
     } else {
