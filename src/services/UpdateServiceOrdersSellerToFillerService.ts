@@ -4,15 +4,15 @@ import AppError from '../errors/AppError';
 import Seller from '../models/Seller';
 import ServiceOrder from '../models/ServiceOrder';
 
-export interface RequestAlterServiceOrdersSellerToFillerService {
+export interface RequestUpdateServiceOrdersSellerToFillerService {
   sellerId: Seller['id'];
   fillerId: Seller['id'];
 }
-class AlterServiceOrdersSellerToFillerService {
+class UpdateServiceOrdersSellerToFillerService {
   public async execute({
     sellerId,
     fillerId,
-  }: RequestAlterServiceOrdersSellerToFillerService): Promise<ServiceOrder[]> {
+  }: RequestUpdateServiceOrdersSellerToFillerService): Promise<ServiceOrder[]> {
     try {
       const serviceOrderRepository = getRepository(ServiceOrder);
       const sellerRepository = getRepository(Seller);
@@ -27,10 +27,10 @@ class AlterServiceOrdersSellerToFillerService {
 
       if (!serviceOrders) {
         console.log(
-          `Nenhuma ordem de serviço encontrada: \n serviceOrders: Id do vendedor ${sellerId}`,
+          `Nenhuma ordem de serviço encontrada: \n Id do vendedor ${sellerId}`,
         );
         throw new AppError(
-          `Nenhuma ordem de serviço encontrada: \n serviceOrders: Id do vendedor ${sellerId}`,
+          `Nenhuma ordem de serviço encontrada: \n Id do vendedor ${sellerId}`,
           404,
         );
       }
@@ -43,15 +43,15 @@ class AlterServiceOrdersSellerToFillerService {
       return serviceOrders;
     } catch (error) {
       console.log(
-        `Erro ao substituior o vendedor pelo preenchimento "Vendedor Removido do Sistema" \n sellerId: ${sellerId} \n fillerId:${fillerId}\n\n`,
+        `Erro ao substituir o vendedor pelo preenchimento "Vendedor removido do sistema" \n sellerId: ${sellerId} \n fillerId:${fillerId}\n\n`,
       );
       console.log(error);
 
       throw new AppError(
-        `Erro ao substituior o vendedor pelo preenchimento "Vendedor Removido do Sistema" \n sellerId: ${sellerId} \n fillerId:${fillerId}\n\n`,
+        `Erro ao substituir o vendedor pelo preenchimento "Vendedor removido do sistema" \n sellerId: ${sellerId} \n fillerId:${fillerId}\n\n`,
         500,
       );
     }
   }
 }
-export default AlterServiceOrdersSellerToFillerService;
+export default UpdateServiceOrdersSellerToFillerService;

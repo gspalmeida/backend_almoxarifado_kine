@@ -7,7 +7,7 @@ interface Request {
   id: Seller['id'];
   name: Seller['name'];
 }
-class UpdateSelerService {
+class UpdateSellerService {
   public async execute({ id, name }: Request): Promise<Seller> {
     try {
       const sellerRepository = getRepository(Seller);
@@ -25,19 +25,19 @@ class UpdateSelerService {
         },
       );
 
-      const updatedSeler = await sellerRepository.findOneOrFail({
+      const updatedSeller = await sellerRepository.findOneOrFail({
         where: { id },
       });
 
-      return updatedSeler;
+      return updatedSeller;
     } catch (error) {
       console.log('Falha ao atualizar vendedor', error);
 
       throw new AppError(
-        `Erro ao atualizar vendedor: O id: ${id} não foi encontrado na base de dados`,
+        `Erro ao atualizar vendedor: O id: ${id} não foi encontrado na base de dados; Erro: ${error}`,
         400,
       );
     }
   }
 }
-export default UpdateSelerService;
+export default UpdateSellerService;

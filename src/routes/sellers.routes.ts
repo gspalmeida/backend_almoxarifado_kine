@@ -17,14 +17,14 @@ sellersRouter.get('/', async (request, response) => {
 
     sellers.splice(
       sellers.findIndex(
-        seller => seller.name === 'Vendedor Removido do Sistema',
+        seller => seller.name === 'Vendedor removido do sistema',
       ),
       1,
     ); //Remove do array o filler de Vendedores deletados
 
     return response.json(sellers);
   } catch (error) {
-    throw new AppError('Nenhum Vendedor encontrado', 500);
+    throw new AppError('Nenhum vendedor encontrado', 500);
   }
 });
 

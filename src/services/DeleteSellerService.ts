@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import Seller from '../models/Seller';
 import AppError from '../errors/AppError';
 import CreateSellerService from '../services/CreateSellerService';
-import AlterServiceOrdersSellerToFillerService from '../services/AlterServiceOrdersSellerToFillerService';
+import UpdateServiceOrdersSellerToFillerService from './UpdateServiceOrdersSellerToFillerService';
 
 interface Request {
   id: Seller['id'];
@@ -17,17 +17,17 @@ class DeleteSellerService {
       });
 
       let fillerSeller = await sellerRepository.findOne({
-        where: { name: 'Vendedor Removido do Sistema' },
+        where: { name: 'Vendedor removido do sistema' },
       });
       if (!fillerSeller) {
-        const createSeller = new CreateSellerService();
+        const createFiller = new CreateSellerService();
 
-        fillerSeller = await createSeller.execute({
-          name: 'Vendedor Removido do Sistema',
+        fillerSeller = await createFiller.execute({
+          name: 'Vendedor removido do sistema',
         });
       }
-      const changeSellerToFillerSeller = new AlterServiceOrdersSellerToFillerService();
-      await changeSellerToFillerSeller.execute({
+      const changeSellerToFiller = new UpdateServiceOrdersSellerToFillerService();
+      await changeSellerToFiller.execute({
         sellerId: id,
         fillerId: fillerSeller.id,
       });
