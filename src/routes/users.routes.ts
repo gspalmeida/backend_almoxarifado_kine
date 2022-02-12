@@ -33,24 +33,14 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
   delete user.password;
   return response.json(user);
 });
-// FIXME Essa rota deveria mesmo existir ou somente admins podem acessar esse conteúdo?
-usersRouter.get('/', ensureAuthenticated, async (request, response) => {
-  const usersRouterRepository = getRepository(User);
-  try {
-    const users = await usersRouterRepository.find();
-    return response.json(users);
-  } catch (error) {
-    throw new AppError('Nenhum Usuário encontrado', 500);
-  }
-});
 
-usersRouter.get('/details', ensureAuthenticated, async (request, response) => {
+usersRouter.get('/profile', ensureAuthenticated, async (request, response) => {
   const usersRouterRepository = getRepository(User);
   try {
     const user = await usersRouterRepository.findOne(request.user.id);
     return response.json(user);
   } catch (error) {
-    throw new AppError('Nenhum Usuário encontrado', 500);
+    throw new AppError('Falha ao buscar perfil', 500);
   }
 });
 

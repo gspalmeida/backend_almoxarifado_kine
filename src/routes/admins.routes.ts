@@ -5,6 +5,7 @@ import { getRepository } from 'typeorm';
 import uploadConfig from '../config/upload';
 
 import User from '../models/User';
+import Admin from '../models/Admin';
 
 import CreateAdminService from '../services/CreateAdminService';
 import AppError from '../errors/AppError';
@@ -37,6 +38,16 @@ adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
   delete admin.password;
 
   return response.json(admin);
+});
+
+adminsRouter.get('/profile', async (request, response) => {
+  const adminsRepository = getRepository(Admin);
+  try {
+    const admin = await adminsRepository.findOne(request.user.id);
+    return response.json(admin);
+  } catch (error) {
+    throw new AppError('Falha ao buscar perfil', 500);
+  }
 });
 
 adminsRouter.get('/usersToEvaluate', async (request, response) => {
