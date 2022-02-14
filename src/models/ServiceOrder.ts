@@ -49,10 +49,10 @@ class ServiceOrder {
   })
   technician: Technician;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   man_power_cost: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   displacement_cost: number;
 
   @Column('simple-json')
