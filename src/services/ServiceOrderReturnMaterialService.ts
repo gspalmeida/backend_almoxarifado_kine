@@ -41,9 +41,8 @@ class ServiceOrderReturnMaterialService {
       );
     }
     if (productToReturn!.qty < qty) {
-      // TODO Os "AppError" dentro de um trycatch interno retornam pro front o erro do trycatch externo (interno = service; externo = rota)
       throw new AppError(
-        `Você entá tentando retornar mais materiais para o estoque do que a quantidade alocada para essa OS`,
+        `Você entá tentando retornar mais materiais para o estoque do que a quantidade alocada para essa OS. O limite para esse produto é: ${productToReturn.qty}`,
         400,
       );
     }
@@ -74,7 +73,6 @@ class ServiceOrderReturnMaterialService {
       value: serviceOrderTotalCostAfterUpdateMaterials,
       actionType: 'subtraction',
     });
-    console.log(`After update serviceOrder.totalCost: ${updatedTotalCost}`);
 
     serviceOrder = await serviceOrderRepository.findOneOrFail({
       where: { id: serviceOrderId },

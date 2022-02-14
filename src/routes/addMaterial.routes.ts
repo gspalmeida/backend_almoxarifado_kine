@@ -30,10 +30,7 @@ addMaterialRouter.post('/:serviceOrderId', async (request, response) => {
 
     return response.json(serviceOrder);
   } catch (error) {
-    throw new AppError(
-      `Verifique se a quantidade informada está disponível no estoque`,
-      500,
-    );
+    throw new AppError(`${error.message}`, 500);
   }
 });
 
