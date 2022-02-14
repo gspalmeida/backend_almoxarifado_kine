@@ -44,8 +44,15 @@ adminsRouter.get('/profile', async (request, response) => {
   const adminsRepository = getRepository(Admin);
   try {
     const admin = await adminsRepository.findOne(request.user.id);
-    return response.json(admin);
+    if (admin) {
+      const parsedAdmin = admin as AdminWithoutPassword;
+      delete parsedAdmin.password;
+      return response.json(parsedAdmin);
+    }
+    return response.json({} as Admin);
   } catch (error) {
+    console.log('Falha ao buscar perfil', error);
+
     throw new AppError('Falha ao buscar perfil', 500);
   }
 });
@@ -63,7 +70,7 @@ adminsRouter.get('/usersToEvaluate', async (request, response) => {
     });
     return response.json(usersToEvaluate);
   } catch (error) {
-    throw new AppError('None users found', 500);
+    throw new AppError('Falha ao buscar usuários aguardando aprovação', 500);
   }
 });
 
@@ -80,7 +87,7 @@ adminsRouter.get('/approvedUsers', async (request, response) => {
     });
     return response.json(approvedUsers);
   } catch (error) {
-    throw new AppError('None users found', 500);
+    throw new AppError('Falha ao buscar usuários aprovados', 500);
   }
 });
 
@@ -93,7 +100,7 @@ adminsRouter.put('/approveUser/:id', async (request, response) => {
       where: { id },
     });
     if (!user) {
-      throw new AppError('User Id not Found');
+      throw new AppError(`Usuário (id: ${id} não encontrado`);
     }
     await usersRepository.update(
       { id },
@@ -104,13 +111,8 @@ adminsRouter.put('/approveUser/:id', async (request, response) => {
     );
     return response.json(user);
   } catch (error) {
-    console.log(
-      `Failed on update the user aproval status with the error: ${error}`,
-    );
-    throw new AppError(
-      `Failed on update the user aproval status with the error: ${error}`,
-      500,
-    );
+    console.log(`Falha ao aprovar o usuário (id: ${id}): ${error}`);
+    throw new AppError(`Falha ao aprovar o usuário (id: ${id}): ${error}`, 500);
   }
 });
 adminsRouter.put('/reproveUser/:id', async (request, response) => {
@@ -122,7 +124,7 @@ adminsRouter.put('/reproveUser/:id', async (request, response) => {
       where: { id },
     });
     if (!user) {
-      throw new AppError('User Id not Found');
+      throw new AppError(`Usuário (id: ${id} não encontrado`);
     }
     await usersRepository.update(
       { id },
@@ -133,16 +135,14 @@ adminsRouter.put('/reproveUser/:id', async (request, response) => {
     );
     return response.json(user);
   } catch (error) {
-    console.log(
-      `Failed on update the user aproval status with the error: ${error}`,
-    );
+    console.log(`Falha ao reprovar o usuário (id: ${id}): ${error}`);
     throw new AppError(
-      `Failed on update the user aproval status with the error: ${error}`,
+      `Falha ao reprovar o usuário (id: ${id}): ${error}`,
       500,
     );
   }
 });
-adminsRouter.delete('/users/:id', async (request, response) => {
+adminsRouter.delete('/deleteUser/:id', async (request, response) => {
   const { id } = request.params;
   const usersRepository = getRepository(User);
 
@@ -155,7 +155,7 @@ adminsRouter.delete('/users/:id', async (request, response) => {
       },
     );
   } catch (error) {
-    throw new AppError('Failed on Disaprove the user');
+    throw new AppError(`Falha ao deletar usuário (id: ${id}: ${error}`);
   }
   response.sendStatus(200);
 });

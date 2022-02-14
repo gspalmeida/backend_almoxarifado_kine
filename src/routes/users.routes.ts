@@ -38,8 +38,14 @@ usersRouter.get('/profile', ensureAuthenticated, async (request, response) => {
   const usersRouterRepository = getRepository(User);
   try {
     const user = await usersRouterRepository.findOne(request.user.id);
-    return response.json(user);
+    if (user) {
+      const parsedUser = user as UserWithoutPassword;
+      delete parsedUser.password;
+      return response.json(parsedUser);
+    }
+    return response.json({} as User);
   } catch (error) {
+    console.log('Falha ao buscar perfil', error);
     throw new AppError('Falha ao buscar perfil', 500);
   }
 });
