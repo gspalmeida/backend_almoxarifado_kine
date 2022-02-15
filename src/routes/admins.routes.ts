@@ -40,6 +40,32 @@ adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
   return response.json(admin);
 });
 
+adminsRouter.patch(
+  '/avatar',
+  upload.single('avatar'),
+  async (request, response) => {
+    if (!request.file) {
+      throw new AppError('Nenhuma imagem encontrada', 500);
+    }
+    const avatar = request.file.filename;
+    const adminsRouterRepository = getRepository(Admin);
+    try {
+      await adminsRouterRepository.update(request.user.id, {
+        avatar,
+      });
+      const admin = await adminsRouterRepository.findOne(request.user.id);
+      if (admin) {
+        const parsedAdmin = admin as AdminWithoutPassword;
+        delete parsedAdmin.password;
+        return response.json(parsedAdmin);
+      }
+      return response.json({} as Admin);
+    } catch (error) {
+      throw new AppError('Nenhum Usuário encontrado', 500);
+    }
+  },
+);
+
 adminsRouter.get('/profile', async (request, response) => {
   const adminsRepository = getRepository(Admin);
   try {
