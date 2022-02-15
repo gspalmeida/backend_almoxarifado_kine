@@ -46,15 +46,9 @@ class AlterServiceOrderTotalCostService {
         newTotalCost =
           Math.round((serviceOrder.total_cost + value) * 100) / 100;
       }
-      const updatedServiceOrder = await serviceOrderRepository.update(
-        serviceOrder.id,
-        {
-          total_cost: newTotalCost,
-        },
-      );
-      console.log(
-        `After update serviceOrder.totalCost: ${updatedServiceOrder}`,
-      );
+      await serviceOrderRepository.update(serviceOrder.id, {
+        total_cost: newTotalCost,
+      });
 
       return newTotalCost;
     } catch (error) {

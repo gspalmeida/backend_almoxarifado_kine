@@ -5,9 +5,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
   ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import Seller from './Seller';
 import Client from './Client';
@@ -51,10 +49,10 @@ class ServiceOrder {
   })
   technician: Technician;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   man_power_cost: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   displacement_cost: number;
 
   @Column('simple-json')

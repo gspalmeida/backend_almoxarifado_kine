@@ -23,44 +23,30 @@ usersRouter.post('/', upload.single('avatar'), async (request, response) => {
   if (request.file) {
     avatar = request.file.filename;
   }
-
   const createUser = new CreateUserService();
-
   const user: UserWithoutPassword = await createUser.execute({
     name,
     email,
     password,
     avatar,
   });
-
   delete user.password;
-
   return response.json(user);
 });
 
-usersRouter.get('/', ensureAuthenticated, async (request, response) => {
-  console.log('\n\n\n\n Entrou no get Users');
-  const usersRouterRepository = getRepository(User);
-  try {
-    const usersRouter = await usersRouterRepository.find();
-    console.log(usersRouter);
-
-    return response.json(usersRouter);
-  } catch (error) {
-    throw new AppError('Nenhum Usuário encontrado', 500);
-  }
-});
-
-usersRouter.get('/details', ensureAuthenticated, async (request, response) => {
-  console.log('\n\n\n\n Entrou no get UsersDetais');
+usersRouter.get('/profile', ensureAuthenticated, async (request, response) => {
   const usersRouterRepository = getRepository(User);
   try {
     const user = await usersRouterRepository.findOne(request.user.id);
-    console.log(user);
-
-    return response.json(user);
+    if (user) {
+      const parsedUser = user as UserWithoutPassword;
+      delete parsedUser.password;
+      return response.json(parsedUser);
+    }
+    return response.json({} as User);
   } catch (error) {
-    throw new AppError('Nenhum Usuário encontrado', 500);
+    console.log('Falha ao buscar perfil', error);
+    throw new AppError('Falha ao buscar perfil', 500);
   }
 });
 
@@ -69,23 +55,16 @@ usersRouter.patch(
   upload.single('avatar'),
   ensureAuthenticated,
   async (request, response) => {
-    console.log('\n\n\n\n Entrou no patch /user/avatar;');
-
     if (!request.file) {
       throw new AppError('Nenhuma imagem encontrada', 500);
     }
-
     const avatar = request.file.filename;
     const usersRouterRepository = getRepository(User);
     try {
       await usersRouterRepository.update(request.user.id, {
         avatar,
       });
-
       const user = await usersRouterRepository.findOne(request.user.id);
-
-      console.log(user);
-
       return response.json(user);
     } catch (error) {
       throw new AppError('Nenhum Usuário encontrado', 500);

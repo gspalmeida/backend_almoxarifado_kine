@@ -132,25 +132,37 @@ serviceOrdersRouter.patch('/close/:id', async (request, response) => {
 });
 
 serviceOrdersRouter.patch('/terminate/:id', async (request, response) => {
-  console.log('\n\n\n\n Entrou no GET serviceOrders/terminate/:id');
   const serviceOrdersRepository = getRepository(ServiceOrder);
 
   const { id } = request.params;
   const { displacement_cost, man_power_cost } = request.body;
 
   try {
+    const serviceOrder = await serviceOrdersRepository.findOneOrFail(id);
+    const newTotalCost =
+      serviceOrder.total_cost + displacement_cost + man_power_cost;
+
+    const newMaterialsTotalCost = serviceOrder.materials
+      .reduce(function (materialsTotalCost, material) {
+        return materialsTotalCost + material.total_cost;
+      }, 0)
+      .toString();
+
     await serviceOrdersRepository.update(id, {
       displacement_cost,
       man_power_cost,
       running: false,
       completed: false,
       closed: true,
+      total_cost: newTotalCost,
+      materials_total_cost: newMaterialsTotalCost,
     });
-    const serviceOrder = await serviceOrdersRepository.findOne(id);
-    console.log(serviceOrder);
-
-    return response.json(serviceOrder);
+    const updatedServiceOrder = await serviceOrdersRepository.findOne(id);
+    return response.json(updatedServiceOrder);
   } catch (error) {
+    console.log('erro ao encerrar');
+    console.log(error);
+
     throw new AppError('Ordem de serviço não encontrada', 404);
   }
 });
@@ -183,12 +195,12 @@ serviceOrdersRouter.post(
       return response.json(updatedServiceOrder);
     } catch (error) {
       console.log(
-        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${productName}, qty:${qty} \n error: ${error}`,
+        `Erro ao retornar material pro estoque: ${error!.message}`,
         error,
       );
 
       throw new AppError(
-        `Erro ao alocar retornar material pro estoque => serviceOrderId:${serviceOrderId}, product_name:${productName}, qty:${qty} \n error: ${error}`,
+        `Erro ao retornar material pro estoque: ${error!.message}`,
         500,
       );
     }

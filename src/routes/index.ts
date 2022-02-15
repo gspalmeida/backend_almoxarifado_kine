@@ -16,8 +16,8 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const routes = Router();
 routes.use('/login', authRouter);
-routes.use('/users', usersRouter);
-routes.use('/admins', isAdmin, adminsRouter);
+routes.use('/users', usersRouter); // Rota Criação de Usuários
+routes.use('/admins', isAdmin, adminsRouter); // Rota Gestão de Usuários
 routes.use('/suppliers', ensureAuthenticated, suppliersRouter);
 routes.use('/costCenters', ensureAuthenticated, costCentersRouter);
 routes.use('/sellers', ensureAuthenticated, sellersRouter);
