@@ -49,7 +49,12 @@ class CreateProductService {
     };
 
     if (!description) {
-      description = `Valor total da nota fiscal: ${totalPurchaseAmount}`;
+      const actualDate = new Date();
+      const day = String(actualDate.getDate()).padStart(2, '0');
+      const month = String(actualDate.getMonth() + 1).padStart(2, '0');
+      const year = actualDate.getFullYear();
+      const formattedDate = day + '/' + month + '/' + year;
+      description = `Data da ultima compra: ${formattedDate}`;
       product = { ...product, description };
     }
 
