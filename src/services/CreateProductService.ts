@@ -34,7 +34,6 @@ class CreateProductService {
     totalPurchaseAmount,
   }: RequestCreateProduct): Promise<Product> {
     const productRepository = getRepository(Product);
-    console.log('Entrou no service de produtos');
 
     const productAlreadyExists = await productRepository.findOne({
       where: { name },
@@ -55,21 +54,10 @@ class CreateProductService {
     }
 
     if (productAlreadyExists) {
-      console.log('\n\n\nEntrou no update');
       qty_last_order = productAlreadyExists.qty_ordered;
       qty_stocked = productAlreadyExists.qty_stocked + qty_ordered;
       max_stock_limit =
         qty_last_order > qty_stocked ? qty_last_order : qty_stocked;
-
-      console.log(
-        'maxStock: %s qtyStocked: %s qtyLasOrder: %s',
-        qty_last_order,
-        qty_stocked,
-        max_stock_limit,
-      );
-
-      console.log('\n\nproductAlreadyExists:', productAlreadyExists);
-      console.log('\nproduct antes:', product);
 
       product = {
         ...productAlreadyExists,
@@ -78,7 +66,6 @@ class CreateProductService {
         qty_stocked,
         max_stock_limit,
       };
-      console.log('\nproduct depois:', product);
 
       const updatedProduct = await productRepository.save(product);
       return updatedProduct;

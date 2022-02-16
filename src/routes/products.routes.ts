@@ -6,6 +6,8 @@ import Product from '../models/Product';
 import { RequestCreateProduct } from '../services/CreateProductService';
 
 import CreateProductService from '../services/CreateProductService';
+import DeleteProductService from '../services/DeleteProductService';
+import UpdateProductService from '../services/UpdateProductService';
 
 const productsRouter = Router();
 
@@ -70,6 +72,50 @@ productsRouter.get('/', async (request, response) => {
     } else {
       throw new AppError('Nenhum produto encontrado', 500);
     }
+  }
+});
+
+productsRouter.delete('/:id', async (request, response) => {
+  try {
+    const { id } = request.params;
+
+    const deleteProduct = new DeleteProductService();
+    const deletedProduct = await deleteProduct.execute({
+      id,
+    });
+
+    return response.json(deletedProduct);
+  } catch (error) {
+    throw new AppError(`Falha ao deletar produto, erro: ${error}`, 500);
+  }
+});
+
+productsRouter.patch('/', async (request, response) => {
+  const {
+    id,
+    newName,
+    newDescription,
+    newUnitCost,
+    newQuantityInStock,
+    newMaxStockLimit,
+  } = request.body;
+  try {
+    const updateProduct = new UpdateProductService();
+    const updatedProduct = await updateProduct.execute({
+      id,
+      name: newName,
+      description: newDescription,
+      unit_cost: newUnitCost,
+      qty_stocked: newQuantityInStock,
+      max_stock_limit: newMaxStockLimit,
+    });
+
+    return response.json(updatedProduct);
+  } catch (error) {
+    throw new AppError(
+      `Falha ao atualizad dados do produto, erro: ${error}`,
+      500,
+    );
   }
 });
 

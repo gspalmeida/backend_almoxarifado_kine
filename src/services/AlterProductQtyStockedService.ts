@@ -40,7 +40,7 @@ class AlterProductQtyStockedService {
         const newQtyStocked = oldProductData.qty_stocked - changeQty;
         if (newQtyStocked < 0) {
           throw new AppError(
-            'Você está tentando alocar mais itens a uma Ordem de Servico do que a quantidade disponível em estoque',
+            `Você está tentando alocar mais itens a uma Ordem de Servico do que a quantidade disponível em estoque. O limite para esse produto é: ${oldProductData.qty_stocked}`,
             400,
           );
         }
